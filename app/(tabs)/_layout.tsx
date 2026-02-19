@@ -1,71 +1,48 @@
-import { Tabs } from 'expo-router';
-import { Platform } from 'react-native';
+// Tabs Layout - Featurama SDK Test
 
-export default function TabLayout() {
+import { Tabs } from 'expo-router';
+import { Home, Settings } from 'lucide-react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useThemeStore } from '@stores/themeStore';
+
+export default function TabsLayout() {
+  const colors = useThemeStore((state) => state.colors);
+  const insets = useSafeAreaInsets();
+
+  console.log('[TabsLayout] Render, colors.background:', colors.background);
+
   return (
     <Tabs
       screenOptions={{
-        headerShown: true,
-        tabBarActiveTintColor: '#6366f1',
-        tabBarStyle: Platform.select({
-          ios: { position: 'absolute' },
-          default: {},
-        }),
+        headerShown: false,
+        tabBarActiveTintColor: colors.accent,
+        tabBarInactiveTintColor: colors.textSecondary,
+        tabBarStyle: {
+          backgroundColor: colors.card,
+          borderTopColor: colors.border,
+          paddingBottom: insets.bottom,
+          height: 56 + insets.bottom,
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '500',
+        },
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="home"
         options={{
-          title: 'Pre-built',
-          headerShown: false,
-          tabBarIcon: ({ color, size }) => (
-            <TabIcon name="grid" color={color} size={size} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="manual"
-        options={{
-          title: 'Manual',
-          tabBarIcon: ({ color, size }) => (
-            <TabIcon name="code" color={color} size={size} />
-          ),
+          title: 'Feature Requests',
+          tabBarIcon: ({ color, size }) => <Home size={size} color={color} />,
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
           title: 'Settings',
-          tabBarIcon: ({ color, size }) => (
-            <TabIcon name="gear" color={color} size={size} />
-          ),
+          tabBarIcon: ({ color, size }) => <Settings size={size} color={color} />,
         }}
       />
     </Tabs>
-  );
-}
-
-/**
- * Simple text-based tab icon since we don't want to add vector icon dependencies.
- */
-function TabIcon({
-  name,
-  color,
-  size,
-}: {
-  name: 'grid' | 'code' | 'gear';
-  color: string;
-  size: number;
-}) {
-  const { Text } = require('react-native');
-  const icons: Record<string, string> = {
-    grid: '\u25A6',
-    code: '\u2039/\u203A',
-    gear: '\u2699',
-  };
-  return (
-    <Text style={{ color, fontSize: size, textAlign: 'center' }}>
-      {icons[name] ?? '?'}
-    </Text>
   );
 }

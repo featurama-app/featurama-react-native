@@ -1,233 +1,124 @@
-import { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
-  ScrollView,
-  useColorScheme,
-} from 'react-native';
-import { config, USER_ID } from '../../src/config';
+// Settings Screen - Theme only (minimal for SDK testing)
+
+import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { Moon, Sun, Settings } from 'lucide-react-native';
+import { useThemeStore } from '@stores/themeStore';
+import { ThemeMode } from '@apptypes/enums';
+import { ScreenLayout } from '@components/common/ScreenLayout';
 
 export default function SettingsScreen() {
-  const colorScheme = useColorScheme() ?? 'light';
-  const isDark = colorScheme === 'dark';
-
-  const [apiKey, setApiKey] = useState(config.apiKey);
-  const [baseUrl, setBaseUrl] = useState(config.baseUrl ?? '');
-  const [saved, setSaved] = useState(false);
-
-  const handleSave = () => {
-    if (!apiKey.startsWith('fm_live_')) {
-      Alert.alert('Invalid API Key', 'API key must start with "fm_live_"');
-      return;
-    }
-
-    config.apiKey = apiKey;
-    config.baseUrl = baseUrl || undefined;
-
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-
-    Alert.alert(
-      'Config Saved',
-      'Configuration updated. Restart the app for changes to take full effect.',
-    );
-  };
-
-  const bg = isDark ? '#111' : '#f9fafb';
-  const cardBg = isDark ? '#1c1c1e' : '#fff';
-  const textColor = isDark ? '#f1f1f1' : '#111';
-  const secondaryText = isDark ? '#8e8e93' : '#6b7280';
-  const borderColor = isDark ? '#333' : '#e5e7eb';
-  const inputBg = isDark ? '#2c2c2e' : '#f3f4f6';
+  const colors = useThemeStore((state) => state.colors);
+  const themeMode = useThemeStore((state) => state.themeMode);
+  const setThemeMode = useThemeStore((state) => state.setThemeMode);
 
   return (
-    <ScrollView
-      style={[styles.container, { backgroundColor: bg }]}
-      contentContainerStyle={styles.content}
-    >
-      <View style={[styles.card, { backgroundColor: cardBg, borderColor }]}>
-        <Text style={[styles.sectionTitle, { color: textColor }]}>
-          SDK Configuration
-        </Text>
-
-        <Text style={[styles.label, { color: secondaryText }]}>API Key</Text>
-        <TextInput
-          style={[
-            styles.input,
-            { backgroundColor: inputBg, color: textColor, borderColor },
-          ]}
-          value={apiKey}
-          onChangeText={setApiKey}
-          placeholder="fm_live_..."
-          placeholderTextColor={secondaryText}
-          autoCapitalize="none"
-          autoCorrect={false}
-        />
-
-        <Text style={[styles.label, { color: secondaryText }]}>Base URL</Text>
-        <TextInput
-          style={[
-            styles.input,
-            { backgroundColor: inputBg, color: textColor, borderColor },
-          ]}
-          value={baseUrl}
-          onChangeText={setBaseUrl}
-          placeholder="http://localhost:5001"
-          placeholderTextColor={secondaryText}
-          autoCapitalize="none"
-          autoCorrect={false}
-          keyboardType="url"
-        />
-
-        <TouchableOpacity
-          style={[styles.saveButton, saved && styles.savedButton]}
-          onPress={handleSave}
-          activeOpacity={0.7}
-        >
-          <Text style={styles.saveButtonText}>
-            {saved ? 'Saved!' : 'Save Configuration'}
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={[styles.card, { backgroundColor: cardBg, borderColor }]}>
-        <Text style={[styles.sectionTitle, { color: textColor }]}>
-          Connection Status
-        </Text>
-
-        <View style={styles.statusRow}>
-          <Text style={[styles.statusLabel, { color: secondaryText }]}>
-            API Key:
-          </Text>
-          <Text
-            style={[
-              styles.statusValue,
-              {
-                color: config.apiKey.startsWith('fm_live_')
-                  ? '#22c55e'
-                  : '#ef4444',
-              },
-            ]}
-          >
-            {config.apiKey.startsWith('fm_live_')
-              ? `${config.apiKey.substring(0, 16)}...`
-              : 'Not configured'}
+    <ScreenLayout safeArea padding={false}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+      >
+        <View style={styles.header}>
+          <Text style={[styles.screenTitle, { color: colors.text }]}>
+            Settings
           </Text>
         </View>
 
-        <View style={styles.statusRow}>
-          <Text style={[styles.statusLabel, { color: secondaryText }]}>
-            Base URL:
+        {/* Appearance */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>
+            Appearance
           </Text>
-          <Text style={[styles.statusValue, { color: textColor }]}>
-            {config.baseUrl || 'Default (api.featurama.io)'}
-          </Text>
+          <View style={[styles.sectionContent, { backgroundColor: colors.card }]}>
+            <View style={styles.themePickerContainer}>
+              <View style={[styles.segmentedControl, { backgroundColor: colors.gray100 }]}>
+                <Pressable
+                  style={[
+                    styles.segment,
+                    themeMode === ThemeMode.Light && [styles.segmentActive, { backgroundColor: colors.card }],
+                  ]}
+                  onPress={() => setThemeMode(ThemeMode.Light)}
+                >
+                  <Sun size={16} color={themeMode === ThemeMode.Light ? colors.text : colors.textSecondary} />
+                  <Text style={[styles.segmentText, { color: themeMode === ThemeMode.Light ? colors.text : colors.textSecondary }]}>
+                    Light
+                  </Text>
+                </Pressable>
+                <Pressable
+                  style={[
+                    styles.segment,
+                    themeMode === ThemeMode.Dark && [styles.segmentActive, { backgroundColor: colors.card }],
+                  ]}
+                  onPress={() => setThemeMode(ThemeMode.Dark)}
+                >
+                  <Moon size={16} color={themeMode === ThemeMode.Dark ? colors.text : colors.textSecondary} />
+                  <Text style={[styles.segmentText, { color: themeMode === ThemeMode.Dark ? colors.text : colors.textSecondary }]}>
+                    Dark
+                  </Text>
+                </Pressable>
+                <Pressable
+                  style={[
+                    styles.segment,
+                    themeMode === ThemeMode.System && [styles.segmentActive, { backgroundColor: colors.card }],
+                  ]}
+                  onPress={() => setThemeMode(ThemeMode.System)}
+                >
+                  <Settings size={16} color={themeMode === ThemeMode.System ? colors.text : colors.textSecondary} />
+                  <Text style={[styles.segmentText, { color: themeMode === ThemeMode.System ? colors.text : colors.textSecondary }]}>
+                    System
+                  </Text>
+                </Pressable>
+              </View>
+            </View>
+          </View>
         </View>
 
-        <View style={styles.statusRow}>
-          <Text style={[styles.statusLabel, { color: secondaryText }]}>
-            User ID:
-          </Text>
-          <Text
-            style={[styles.statusValue, { color: textColor }]}
-            numberOfLines={1}
-          >
-            {USER_ID}
-          </Text>
-        </View>
-      </View>
-
-      <View style={[styles.card, { backgroundColor: cardBg, borderColor }]}>
-        <Text style={[styles.sectionTitle, { color: textColor }]}>
-          About
+        {/* Info */}
+        <Text style={[styles.versionFooter, { color: colors.textSecondary }]}>
+          Featurama SDK Tester v1.0.0
         </Text>
-        <Text style={[styles.aboutText, { color: secondaryText }]}>
-          This is a test app for the Featurama React Native SDK. Use the tabs
-          above to test the pre-built UI component or interact with the API
-          manually.
-        </Text>
-        <Text style={[styles.aboutText, { color: secondaryText }]}>
-          The "Pre-built" tab shows the SDK's built-in FeatureRequestsScreen
-          component. The "Manual" tab lets you test individual API calls using
-          the SDK hooks.
-        </Text>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </ScreenLayout>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    padding: 16,
-    gap: 16,
-    paddingBottom: 100,
-  },
-  card: {
-    borderRadius: 12,
-    borderWidth: 1,
-    padding: 16,
-  },
+  scrollView: { flex: 1 },
+  scrollContent: { padding: 16, paddingBottom: 40 },
+  header: { paddingVertical: 8, marginBottom: 16 },
+  screenTitle: { fontSize: 32, fontWeight: 'bold' },
+  section: { marginBottom: 24 },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    marginBottom: 12,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '500',
-    marginBottom: 4,
-    marginTop: 8,
-  },
-  input: {
-    borderWidth: 1,
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 15,
-    fontFamily: 'monospace',
-  },
-  saveButton: {
-    backgroundColor: '#6366f1',
-    borderRadius: 8,
-    padding: 14,
-    alignItems: 'center',
-    marginTop: 16,
-  },
-  savedButton: {
-    backgroundColor: '#22c55e',
-  },
-  saveButtonText: {
-    color: '#fff',
-    fontSize: 16,
+    fontSize: 13,
     fontWeight: '600',
-  },
-  statusRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 8,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#e5e7eb',
-  },
-  statusLabel: {
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  statusValue: {
-    fontSize: 14,
-    fontFamily: 'monospace',
-    flexShrink: 1,
-    marginLeft: 8,
-  },
-  aboutText: {
-    fontSize: 14,
-    lineHeight: 20,
+    textTransform: 'uppercase',
     marginBottom: 8,
+    marginLeft: 4,
   },
+  sectionContent: { borderRadius: 12, overflow: 'hidden' },
+  themePickerContainer: { padding: 12 },
+  segmentedControl: {
+    flexDirection: 'row',
+    borderRadius: 10,
+    padding: 4,
+    width: '100%',
+  },
+  segment: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 8,
+    borderRadius: 8,
+    gap: 6,
+  },
+  segmentActive: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  segmentText: { fontSize: 14, fontWeight: '500' },
+  versionFooter: { fontSize: 12, textAlign: 'center', marginTop: 8 },
 });
