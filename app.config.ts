@@ -2,7 +2,7 @@ import { ExpoConfig, ConfigContext } from 'expo/config';
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
-  name: 'FeaturamaTester',
+  name: 'FT Expo',
   slug: 'featurama-tester',
   version: '1.0.0',
   orientation: 'portrait',
