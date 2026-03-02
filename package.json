@@ -42,10 +42,10 @@
     "access": "public"
   },
   "peerDependencies": {
-    "react": ">=17.0.0",
-    "react-native": "*",
     "@react-native-async-storage/async-storage": ">=1.17.0",
     "expo-localization": ">=14.0.0",
+    "react": ">=17.0.0",
+    "react-native": "*",
     "react-native-localize": ">=3.0.0",
     "react-native-svg": ">=13.0.0"
   },
@@ -66,11 +66,11 @@
   "devDependencies": {
     "@react-native-async-storage/async-storage": "^1.23.0",
     "@types/react": "^18.2.0",
-    "react-native-svg": "^15.0.0",
     "eslint": "^8.57.0",
     "react": "^18.2.0",
     "react-native": "^0.74.0",
     "react-native-builder-bob": "^0.23.0",
+    "react-native-svg": "^15.15.3",
     "typescript": "^5.4.0"
   },
   "react-native-builder-bob": {
