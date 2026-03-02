@@ -1,0 +1,90 @@
+{
+  "name": "@featurama/react-native",
+  "version": "0.3.0",
+  "description": "React Native SDK for Featurama - Feature request management for mobile apps",
+  "main": "lib/commonjs/index",
+  "module": "lib/module/index",
+  "types": "lib/typescript/index.d.ts",
+  "react-native": "src/index",
+  "source": "src/index",
+  "files": [
+    "src",
+    "lib",
+    "!**/__tests__",
+    "!**/__fixtures__",
+    "!**/__mocks__"
+  ],
+  "scripts": {
+    "prepare": "bob build",
+    "typescript": "tsc --noEmit",
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "clean": "rm -rf lib"
+  },
+  "keywords": [
+    "react-native",
+    "feature-requests",
+    "featurama",
+    "sdk",
+    "mobile",
+    "feedback"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/featurama/react-native-sdk.git"
+  },
+  "author": "Featurama",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/featurama/react-native-sdk/issues"
+  },
+  "homepage": "https://github.com/featurama/react-native-sdk#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "react": ">=17.0.0",
+    "react-native": "*",
+    "@react-native-async-storage/async-storage": ">=1.17.0",
+    "expo-localization": ">=14.0.0",
+    "react-native-localize": ">=3.0.0",
+    "react-native-svg": ">=13.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@react-native-async-storage/async-storage": {
+      "optional": true
+    },
+    "expo-localization": {
+      "optional": true
+    },
+    "react-native-localize": {
+      "optional": true
+    },
+    "react-native-svg": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@react-native-async-storage/async-storage": "^1.23.0",
+    "@types/react": "^18.2.0",
+    "react-native-svg": "^15.0.0",
+    "eslint": "^8.57.0",
+    "react": "^18.2.0",
+    "react-native": "^0.74.0",
+    "react-native-builder-bob": "^0.23.0",
+    "typescript": "^5.4.0"
+  },
+  "react-native-builder-bob": {
+    "source": "src",
+    "output": "lib",
+    "targets": [
+      "commonjs",
+      "module",
+      [
+        "typescript",
+        {
+          "project": "tsconfig.build.json"
+        }
+      ]
+    ]
+  }
+}
