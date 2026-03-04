@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, TextInput, TouchableOpacity, ActivityIndicator, Platform, StyleSheet } from 'react-native';
+import { View, TextInput, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 import { SendIcon } from '../icons';
 import type { FeaturamaStrings } from '../strings/en';
