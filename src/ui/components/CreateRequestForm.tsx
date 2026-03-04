@@ -3,17 +3,23 @@ import {
   View,
   Text,
   TextInput,
+  ScrollView,
   TouchableOpacity,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
   StyleSheet,
 } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
-import { SendIcon } from '../icons';
+import { CloseIcon } from '../icons';
 import type { FeaturamaStrings } from '../strings/en';
 
 interface CreateRequestFormProps {
   strings: FeaturamaStrings;
   emailCollection: 'none' | 'optional' | 'required';
+  insetTop: number;
+  insetBottom: number;
+  keyboardVerticalOffset: number;
   onSubmit: (title: string, description: string, email?: string) => Promise<void>;
   onCancel: () => void;
 }
@@ -21,6 +27,9 @@ interface CreateRequestFormProps {
 export function CreateRequestForm({
   strings,
   emailCollection,
+  insetTop,
+  insetBottom,
+  keyboardVerticalOffset,
   onSubmit,
   onCancel,
 }: CreateRequestFormProps): JSX.Element {
@@ -47,120 +56,134 @@ export function CreateRequestForm({
   }, [canSubmit, title, description, email, onSubmit]);
 
   return (
-    <View style={[styles.formContainer, { backgroundColor: theme.card, borderColor: theme.borderAccent }]}>
-      <TextInput
-        style={[styles.input, { backgroundColor: theme.secondary, color: theme.text }]}
-        value={title}
-        onChangeText={setTitle}
-        placeholder={strings.titlePlaceholder}
-        placeholderTextColor={theme.textSecondary}
-        autoFocus
-      />
-      <TextInput
-        style={[styles.input, styles.textArea, { backgroundColor: theme.secondary, color: theme.text }]}
-        value={description}
-        onChangeText={setDescription}
-        placeholder={strings.descriptionPlaceholder}
-        placeholderTextColor={theme.textSecondary}
-        multiline
-        numberOfLines={3}
-      />
-      {emailCollection !== 'none' && (
-        <View>
-          <TextInput
-            style={[styles.input, { backgroundColor: theme.secondary, color: theme.text }]}
-            value={email}
-            onChangeText={setEmail}
-            placeholder={strings.emailPlaceholder}
-            placeholderTextColor={theme.textSecondary}
-            keyboardType="email-address"
-            autoCapitalize="none"
-            autoCorrect={false}
-          />
-          <Text style={[styles.emailHint, { color: theme.textSecondary }]}>
-            {emailCollection === 'required' ? strings.emailRequired : strings.emailEncouragement}
-          </Text>
-        </View>
-      )}
-      <View style={styles.formActions}>
-        <TouchableOpacity
-          style={[styles.cancelButton, { backgroundColor: theme.secondary }]}
-          onPress={onCancel}
-        >
-          <Text style={[styles.cancelText, { color: theme.text }]}>{strings.cancel}</Text>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={keyboardVerticalOffset}
+    >
+      {/* Header */}
+      <View style={[styles.header, { paddingTop: insetTop + 8, borderColor: theme.border }]}>
+        <TouchableOpacity onPress={onCancel} style={styles.headerButton}>
+          <CloseIcon size={22} color={theme.text} />
         </TouchableOpacity>
+        <Text style={[styles.headerTitle, { color: theme.text }]} numberOfLines={1}>
+          {strings.newRequest}
+        </Text>
         <TouchableOpacity
-          style={[
-            styles.submitButton,
-            { backgroundColor: theme.accent, opacity: !canSubmit ? 0.5 : 1 },
-          ]}
+          style={[styles.submitButton, { backgroundColor: canSubmit ? theme.accent : theme.accentLight }]}
           onPress={handleSubmit}
           disabled={!canSubmit}
         >
           {isSubmitting ? (
             <ActivityIndicator size="small" color={theme.accentForeground} />
           ) : (
-            <>
-              <SendIcon size={16} color={theme.accentForeground} />
-              <Text style={[styles.submitText, { color: theme.accentForeground }]}>
-                {strings.submit}
-              </Text>
-            </>
+            <Text style={[styles.submitText, { color: canSubmit ? theme.accentForeground : theme.textSecondary }]}>
+              {strings.submit}
+            </Text>
           )}
         </TouchableOpacity>
       </View>
-    </View>
+
+      {/* Form body */}
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: insetBottom + 24 }]}
+        keyboardShouldPersistTaps="handled"
+      >
+        <TextInput
+          style={[styles.input, { backgroundColor: theme.secondary, color: theme.text }]}
+          value={title}
+          onChangeText={setTitle}
+          placeholder={strings.titlePlaceholder}
+          placeholderTextColor={theme.textSecondary}
+          autoFocus
+        />
+        <TextInput
+          style={[styles.input, styles.textArea, { backgroundColor: theme.secondary, color: theme.text }]}
+          value={description}
+          onChangeText={setDescription}
+          placeholder={strings.descriptionPlaceholder}
+          placeholderTextColor={theme.textSecondary}
+          multiline
+          numberOfLines={5}
+          textAlignVertical="top"
+        />
+        {emailCollection !== 'none' && (
+          <View>
+            <TextInput
+              style={[styles.input, { backgroundColor: theme.secondary, color: theme.text }]}
+              value={email}
+              onChangeText={setEmail}
+              placeholder={strings.emailPlaceholder}
+              placeholderTextColor={theme.textSecondary}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+            <Text style={[styles.emailHint, { color: theme.textSecondary }]}>
+              {emailCollection === 'required' ? strings.emailRequired : strings.emailEncouragement}
+            </Text>
+          </View>
+        )}
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  formContainer: {
-    marginHorizontal: 16,
-    marginBottom: 16,
+  container: {
+    flex: 1,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingBottom: 8,
+    minHeight: 44,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  headerButton: {
+    width: 44,
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerTitle: {
+    flex: 1,
+    fontSize: 17,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  submitButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 32,
+    minWidth: 44,
+  },
+  submitText: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
     padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
+    gap: 12,
   },
   input: {
     padding: 14,
     borderRadius: 8,
     fontSize: 16,
-    marginBottom: 12,
   },
   textArea: {
-    minHeight: 80,
-    textAlignVertical: 'top',
+    minHeight: 120,
   },
   emailHint: {
     fontSize: 13,
-    marginTop: -8,
-    marginBottom: 12,
-  },
-  formActions: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  cancelButton: {
-    flex: 1,
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  cancelText: {
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  submitButton: {
-    flex: 1,
-    flexDirection: 'row',
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 6,
-  },
-  submitText: {
-    fontSize: 16,
-    fontWeight: '600',
+    marginTop: 4,
   },
 });

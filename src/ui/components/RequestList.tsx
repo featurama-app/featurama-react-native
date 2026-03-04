@@ -10,6 +10,7 @@ interface RequestListProps {
   error: Error | null;
   votingIds: Set<string>;
   strings: FeaturamaStrings;
+  safeAreaBottom: number;
   onToggleVote: (id: string) => void;
   onRefetch: () => Promise<void>;
   onRequestPress: (request: FeatureRequest) => void;
@@ -21,6 +22,7 @@ export function RequestList({
   error,
   votingIds,
   strings,
+  safeAreaBottom,
   onToggleVote,
   onRefetch,
   onRequestPress,
@@ -73,7 +75,7 @@ export function RequestList({
           />
         )}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={[styles.listContent, { paddingBottom: safeAreaBottom + 80 }]}
         showsVerticalScrollIndicator={false}
         refreshing={isLoading}
         onRefresh={onRefetch}
@@ -109,6 +111,5 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingHorizontal: 16,
-    paddingBottom: 40,
   },
 });

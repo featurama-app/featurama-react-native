@@ -1,4 +1,5 @@
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native';
+import { useState, useEffect } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Keyboard, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 import { ChevronLeftIcon, ChevronUpIcon } from '../icons';
 import { CommentItem } from './CommentItem';
@@ -15,6 +16,8 @@ interface RequestDetailViewProps {
   commentVotingIds: Set<string>;
   strings: FeaturamaStrings;
   insetTop: number;
+  insetBottom: number;
+  keyboardVerticalOffset: number;
   onBack: () => void;
   onToggleRequestVote: () => void;
   onToggleCommentVote: (commentId: string) => void;
@@ -38,22 +41,47 @@ export function RequestDetailView({
   commentVotingIds,
   strings,
   insetTop,
+  insetBottom,
+  keyboardVerticalOffset,
   onBack,
   onToggleRequestVote,
   onToggleCommentVote,
   onAddComment,
 }: RequestDetailViewProps): JSX.Element {
   const theme = useTheme();
+  const hasVoted = request.hasVoted ?? false;
+  const voteColor = hasVoted ? theme.accent : theme.textSecondary;
+  const voteBg = hasVoted ? theme.accentLight : theme.gray100;
+
+  // On Android, manually track keyboard height instead of using KeyboardAvoidingView
+  // which doesn't properly reset after keyboard dismissal.
+  const [androidKeyboardHeight, setAndroidKeyboardHeight] = useState(0);
+  useEffect(() => {
+    if (Platform.OS !== 'android') return;
+    const showSub = Keyboard.addListener('keyboardDidShow', (e) => {
+      setAndroidKeyboardHeight(e.endCoordinates.height);
+    });
+    const hideSub = Keyboard.addListener('keyboardDidHide', () => {
+      setAndroidKeyboardHeight(0);
+    });
+    return () => { showSub.remove(); hideSub.remove(); };
+  }, []);
+
+  const isIOS = Platform.OS === 'ios';
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={isIOS ? 'padding' : undefined}
+      keyboardVerticalOffset={isIOS ? keyboardVerticalOffset : 0}
+    >
       {/* Header */}
       <View style={[styles.header, { paddingTop: insetTop + 8, backgroundColor: theme.background, borderColor: theme.border }]}>
-        <TouchableOpacity onPress={onBack} style={styles.backButton} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-          <ChevronLeftIcon size={20} color={theme.text} />
+        <TouchableOpacity onPress={onBack} style={styles.headerButton}>
+          <ChevronLeftIcon size={22} color={theme.text} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: theme.text }]} numberOfLines={1}>{request.title}</Text>
-        <View style={{ width: 28 }} />
+        <View style={styles.headerButton} />
       </View>
 
       {/* Content */}
@@ -80,16 +108,16 @@ export function RequestDetailView({
 
         {/* Vote button */}
         <TouchableOpacity
-          style={[styles.voteButton, { backgroundColor: theme.accentLight }]}
+          style={[styles.voteButton, { backgroundColor: voteBg }]}
           onPress={onToggleRequestVote}
           disabled={isVotingRequest || !request.isApproved}
         >
           {isVotingRequest ? (
-            <ActivityIndicator size="small" color={theme.accent} />
+            <ActivityIndicator size="small" color={voteColor} />
           ) : (
             <>
-              <ChevronUpIcon size={18} color={theme.accent} />
-              <Text style={[styles.voteCount, { color: theme.accent }]}>{request.voteCount}</Text>
+              <ChevronUpIcon size={18} color={voteColor} />
+              <Text style={[styles.voteCount, { color: voteColor }]}>{request.voteCount}</Text>
             </>
           )}
         </TouchableOpacity>
@@ -123,12 +151,15 @@ export function RequestDetailView({
       </ScrollView>
 
       {/* Add comment form */}
-      <AddCommentForm
-        strings={strings}
-        isSubmitting={isSubmittingComment}
-        onSubmit={onAddComment}
-      />
-    </View>
+      <View style={!isIOS && androidKeyboardHeight > 0 ? { marginBottom: androidKeyboardHeight } : undefined}>
+        <AddCommentForm
+          strings={strings}
+          isSubmitting={isSubmittingComment}
+          safeAreaBottom={insetBottom}
+          onSubmit={onAddComment}
+        />
+      </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -140,19 +171,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingBottom: 12,
-    borderBottomWidth: 1,
-    gap: 8,
+    paddingBottom: 8,
+    minHeight: 44,
+    borderBottomWidth: StyleSheet.hairlineWidth,
   },
-  backButton: {
-    width: 28,
-    height: 28,
+  headerButton: {
+    width: 44,
+    height: 44,
     alignItems: 'center',
     justifyContent: 'center',
   },
   headerTitle: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '600',
     textAlign: 'center',
   },

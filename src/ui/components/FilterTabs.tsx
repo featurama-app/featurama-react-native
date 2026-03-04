@@ -48,6 +48,7 @@ export function FilterTabs({ activeFilter, onFilterChange, strings }: FilterTabs
 const styles = StyleSheet.create({
   filterContainer: {
     paddingHorizontal: 16,
+    marginTop: 12,
     marginBottom: 12,
   },
   segmentedControl: {

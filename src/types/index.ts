@@ -51,6 +51,7 @@ export interface FeatureRequest {
   createdAt: string;
   deviceInfo?: DeviceInfoData | null;
   isApproved: boolean;
+  hasVoted?: boolean;
 }
 
 /**

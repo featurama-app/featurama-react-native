@@ -3,6 +3,8 @@ node_modules/
 
 # Build output
 lib/
+android/build/
+ios/build/
 
 # IDE
 .idea/

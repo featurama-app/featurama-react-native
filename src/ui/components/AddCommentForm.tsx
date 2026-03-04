@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, TextInput, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, TextInput, TouchableOpacity, ActivityIndicator, Platform, StyleSheet } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 import { SendIcon } from '../icons';
 import type { FeaturamaStrings } from '../strings/en';
@@ -7,10 +7,11 @@ import type { FeaturamaStrings } from '../strings/en';
 interface AddCommentFormProps {
   strings: FeaturamaStrings;
   isSubmitting: boolean;
+  safeAreaBottom: number;
   onSubmit: (content: string) => void;
 }
 
-export function AddCommentForm({ strings, isSubmitting, onSubmit }: AddCommentFormProps): JSX.Element {
+export function AddCommentForm({ strings, isSubmitting, safeAreaBottom, onSubmit }: AddCommentFormProps): JSX.Element {
   const theme = useTheme();
   const [content, setContent] = useState('');
 
@@ -22,7 +23,7 @@ export function AddCommentForm({ strings, isSubmitting, onSubmit }: AddCommentFo
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.card, borderColor: theme.border }]}>
+    <View style={[styles.container, { backgroundColor: theme.card, borderColor: theme.border, paddingBottom: Math.max(safeAreaBottom, 80) }]}>
       <TextInput
         style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
         placeholder={strings.commentPlaceholder}
@@ -52,7 +53,8 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'flex-end',
-    padding: 12,
+    paddingTop: 12,
+    paddingHorizontal: 12,
     gap: 8,
     borderTopWidth: 1,
   },

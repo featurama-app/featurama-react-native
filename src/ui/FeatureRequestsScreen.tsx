@@ -1,7 +1,8 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
-import { KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { useFeaturama } from '../hooks/useFeaturama';
 import { useRequests } from '../hooks/useRequests';
+import { useAutoInsets } from './utils/useAutoInsets';
 import { createTheme } from './theme/createTheme';
 import { ThemeContext } from './theme/ThemeContext';
 import { getStringsForLocale } from './strings';
@@ -13,6 +14,7 @@ import { CreateRequestForm } from './components/CreateRequestForm';
 import { RequestList } from './components/RequestList';
 import { RequestDetailView } from './components/RequestDetailView';
 import { Branding } from './components/Branding';
+import { Fab } from './components/Fab';
 import type { FeatureRequestsScreenProps } from './types';
 import type { ProjectConfig, RequestFilter, FeatureRequest, Comment } from '../types';
 
@@ -20,13 +22,18 @@ export function FeatureRequestsScreen({
   colorScheme,
   accentColor,
   onClose,
-  safeAreaTop = 0,
+  safeAreaTop,
+  safeAreaBottom,
+  keyboardVerticalOffset,
   theme: themeOverrides,
 }: FeatureRequestsScreenProps): JSX.Element {
   const theme = useMemo(
     () => ({ ...createTheme(accentColor, colorScheme), ...themeOverrides }),
     [accentColor, colorScheme, themeOverrides]
   );
+
+  const insets = useAutoInsets(safeAreaTop, safeAreaBottom);
+  const effectiveKeyboardOffset = keyboardVerticalOffset ?? 0;
 
   const { client } = useFeaturama();
 
@@ -176,8 +183,8 @@ export function FeatureRequestsScreen({
 
     setVotingIds((prev) => new Set(prev).add(selectedRequest.id));
     try {
-      const { request: updated } = await client.toggleVote(selectedRequest.id, voterId);
-      setSelectedRequest(updated);
+      const { request: updated, isVoting } = await client.toggleVote(selectedRequest.id, voterId);
+      setSelectedRequest({ ...updated, hasVoted: isVoting });
     } finally {
       setVotingIds((prev) => {
         const next = new Set(prev);
@@ -189,10 +196,7 @@ export function FeatureRequestsScreen({
 
   return (
     <ThemeContext.Provider value={theme}>
-      <KeyboardAvoidingView
-        style={[styles.container, { backgroundColor: theme.background }]}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
+      <View style={[styles.container, { backgroundColor: theme.background }]}>
         {selectedRequest ? (
           <RequestDetailView
             request={selectedRequest}
@@ -202,47 +206,52 @@ export function FeatureRequestsScreen({
             isVotingRequest={votingIds.has(selectedRequest.id)}
             commentVotingIds={commentVotingIds}
             strings={strings}
-            insetTop={safeAreaTop}
+            insetTop={insets.top}
+            insetBottom={insets.bottom}
+            keyboardVerticalOffset={effectiveKeyboardOffset}
             onBack={handleBack}
             onToggleRequestVote={handleToggleRequestVoteInDetail}
             onToggleCommentVote={handleToggleCommentVote}
             onAddComment={handleAddComment}
+          />
+        ) : isAdding ? (
+          <CreateRequestForm
+            strings={strings}
+            emailCollection={emailCollection}
+            insetTop={insets.top}
+            insetBottom={insets.bottom}
+            keyboardVerticalOffset={effectiveKeyboardOffset}
+            onSubmit={handleSubmit}
+            onCancel={() => setIsAdding(false)}
           />
         ) : (
           <>
             <Header
               strings={strings}
               onClose={onClose}
-              onAdd={() => setIsAdding(true)}
-              insetTop={safeAreaTop}
+              insetTop={insets.top}
             />
             <FilterTabs
               activeFilter={activeFilter}
               onFilterChange={setActiveFilter}
               strings={strings}
             />
-            {isAdding && (
-              <CreateRequestForm
-                strings={strings}
-                emailCollection={emailCollection}
-                onSubmit={handleSubmit}
-                onCancel={() => setIsAdding(false)}
-              />
-            )}
             <RequestList
               data={data}
               isLoading={isLoading}
               error={error}
               votingIds={votingIds}
               strings={strings}
+              safeAreaBottom={insets.bottom}
               onToggleVote={handleToggleVote}
               onRefetch={refetch}
               onRequestPress={handleRequestPress}
             />
-            {showBranding && <Branding />}
+            {showBranding && <Branding safeAreaBottom={insets.bottom} />}
+            <Fab onPress={() => setIsAdding(true)} safeAreaBottom={insets.bottom} />
           </>
         )}
-      </KeyboardAvoidingView>
+      </View>
     </ThemeContext.Provider>
   );
 }

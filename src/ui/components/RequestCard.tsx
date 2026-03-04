@@ -17,6 +17,9 @@ export function RequestCard({ request, isVoting, strings, onToggleVote, onPress 
   const commentCount = request.commentCount ?? 0;
   const isPending = !request.isApproved;
   const isPlanned = String(request.status) === 'Roadmap';
+  const hasVoted = request.hasVoted ?? false;
+  const voteColor = hasVoted ? theme.accent : theme.textSecondary;
+  const voteBg = hasVoted ? theme.accentLight : theme.gray100;
 
   return (
     <TouchableOpacity
@@ -29,21 +32,27 @@ export function RequestCard({ request, isVoting, strings, onToggleVote, onPress 
       ]}
     >
       <TouchableOpacity
-        style={[styles.voteButton, { backgroundColor: theme.accentLight }]}
+        style={[styles.voteButton, { backgroundColor: voteBg }]}
         onPress={() => onToggleVote(request.id)}
         disabled={isVoting || isPending}
       >
         {isVoting ? (
-          <ActivityIndicator size="small" color={theme.accent} />
+          <ActivityIndicator size="small" color={voteColor} />
         ) : (
           <>
-            <ChevronUpIcon size={20} color={theme.accent} />
-            <Text style={[styles.voteCount, { color: theme.accent }]}>{request.voteCount}</Text>
+            <ChevronUpIcon size={20} color={voteColor} />
+            <Text style={[styles.voteCount, { color: voteColor }]}>{request.voteCount}</Text>
           </>
         )}
       </TouchableOpacity>
       <View style={styles.requestContent}>
-        <Text style={[styles.requestTitle, { color: theme.text }]}>{request.title}</Text>
+        <View style={styles.titleRow}>
+          <Text style={[styles.requestTitle, { color: theme.text, flex: 1 }]}>{request.title}</Text>
+          <View style={styles.commentBubble}>
+            <ChatBubbleIcon size={30} color={theme.accent} />
+            <Text style={[styles.commentBubbleCount, { color: theme.accent }]}>{commentCount}</Text>
+          </View>
+        </View>
         {isPending && (
           <View style={[styles.pendingBadge, { backgroundColor: theme.warningLight }]}>
             <Text style={[styles.pendingText, { color: theme.warningText }]}>
@@ -63,14 +72,6 @@ export function RequestCard({ request, isVoting, strings, onToggleVote, onPress 
             {request.description}
           </Text>
         ) : null}
-        {commentCount > 0 && (
-          <View style={styles.commentRow}>
-            <ChatBubbleIcon size={14} color={theme.textSecondary} />
-            <Text style={[styles.commentCount, { color: theme.textSecondary }]}>
-              {strings.commentsCount.replace('{count}', String(commentCount))}
-            </Text>
-          </View>
-        )}
       </View>
     </TouchableOpacity>
   );
@@ -102,6 +103,25 @@ const styles = StyleSheet.create({
   requestContent: {
     flex: 1,
   },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  commentBubble: {
+    position: 'absolute',
+    right: -6,
+    top: -6,
+    width: 32,
+    height: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  commentBubbleCount: {
+    position: 'absolute',
+    fontSize: 10,
+    fontWeight: '700',
+    marginTop: -2,
+  },
   requestTitle: {
     fontSize: 16,
     fontWeight: '600',
@@ -110,15 +130,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     marginTop: 4,
     lineHeight: 18,
-  },
-  commentRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    marginTop: 6,
-  },
-  commentCount: {
-    fontSize: 12,
   },
   pendingBadge: {
     alignSelf: 'flex-start',

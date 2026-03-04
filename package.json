@@ -10,6 +10,10 @@
   "files": [
     "src",
     "lib",
+    "ios",
+    "android",
+    "*.podspec",
+    "react-native.config.js",
     "!**/__tests__",
     "!**/__fixtures__",
     "!**/__mocks__"
@@ -45,13 +49,13 @@
     "@react-native-async-storage/async-storage": ">=1.17.0",
     "expo-localization": ">=14.0.0",
     "react": ">=17.0.0",
-    "react-native": "*",
+    "react-native": ">=0.72.0",
     "react-native-localize": ">=3.0.0",
     "react-native-svg": ">=13.0.0"
   },
   "peerDependenciesMeta": {
     "@react-native-async-storage/async-storage": {
-      "optional": true
+      "optional": false
     },
     "expo-localization": {
       "optional": true
@@ -60,7 +64,7 @@
       "optional": true
     },
     "react-native-svg": {
-      "optional": true
+      "optional": false
     }
   },
   "devDependencies": {
@@ -72,6 +76,14 @@
     "react-native-builder-bob": "^0.23.0",
     "react-native-svg": "^15.15.3",
     "typescript": "^5.4.0"
+  },
+  "codegenConfig": {
+    "name": "FeaturamaInsetsSpec",
+    "type": "modules",
+    "jsSrcsDir": "src",
+    "android": {
+      "javaPackageName": "com.featurama.reactnative"
+    }
   },
   "react-native-builder-bob": {
     "source": "src",

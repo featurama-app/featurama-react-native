@@ -24,6 +24,7 @@ export interface FeaturamaStrings {
   developerBadge: string;
   pendingReview: string;
   badgePlanned: string;
+  newRequest: string;
 }
 
 export const defaultStrings: FeaturamaStrings = {
@@ -52,4 +53,5 @@ export const defaultStrings: FeaturamaStrings = {
   developerBadge: 'Developer',
   pendingReview: 'Pending Review',
   badgePlanned: 'Planned',
+  newRequest: 'New Request',
 };

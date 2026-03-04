@@ -26,4 +26,5 @@ export const strings: FeaturamaStrings = {
   developerBadge: 'Desarrollador',
   pendingReview: 'Pendiente de revisi\u00f3n',
   badgePlanned: 'Planificado',
+  newRequest: 'Nueva solicitud',
 };

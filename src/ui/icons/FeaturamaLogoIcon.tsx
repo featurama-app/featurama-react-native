@@ -1,4 +1,8 @@
-import { Svg, G, Path } from 'react-native-svg';
+/* eslint-disable @typescript-eslint/no-require-imports */
+const rnSvg = require('react-native-svg');
+const Svg = rnSvg.Svg ?? rnSvg.default;
+const G = rnSvg.G;
+const Path = rnSvg.Path;
 
 interface FeaturamaLogoIconProps {
   size: number;
@@ -23,7 +27,6 @@ export function FeaturamaLogoIcon({ size, color }: FeaturamaLogoIconProps): JSX.
   return (
     <Svg width={size} height={size} viewBox="0 0 1237 1150">
       <G translate="-772, -217">
-        {/* Render back-to-front for correct layering */}
         <Path d={BACK_RECT} fill={color} />
         <Path d={MIDDLE_RECT} fill={color} />
         <Path d={FRONT_RECT} fill={color} />

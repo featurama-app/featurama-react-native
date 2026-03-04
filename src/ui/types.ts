@@ -5,6 +5,8 @@ export interface FeatureRequestsScreenProps {
   accentColor: string;
   onClose?: () => void;
   safeAreaTop?: number;
+  safeAreaBottom?: number;
+  keyboardVerticalOffset?: number;
   /**
    * Override any theme color generated from accentColor/colorScheme.
    * Partial — only the keys you provide will be overridden.
