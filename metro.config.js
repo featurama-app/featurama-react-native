@@ -31,6 +31,7 @@ config.resolver.extraNodeModules = {
     appNodeModules,
     '@react-native-async-storage/async-storage'
   ),
+  'react-native-svg': path.resolve(appNodeModules, 'react-native-svg'),
 };
 
 config.resolver.blockList = [
@@ -43,6 +44,11 @@ config.resolver.blockList = [
   new RegExp(
     `${escapePathForRegex(
       path.resolve(sdkPath, 'node_modules/@react-native-async-storage/async-storage')
+    )}\\/.*`
+  ),
+  new RegExp(
+    `${escapePathForRegex(
+      path.resolve(sdkPath, 'node_modules/react-native-svg')
     )}\\/.*`
   ),
 ];

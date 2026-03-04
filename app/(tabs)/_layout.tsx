@@ -1,7 +1,7 @@
 // Tabs Layout - Featurama SDK Test
 
 import { Tabs } from 'expo-router';
-import { Home, Settings } from 'lucide-react-native';
+import { Layers, Settings } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useThemeStore } from '@stores/themeStore';
 
@@ -30,10 +30,10 @@ export default function TabsLayout() {
       }}
     >
       <Tabs.Screen
-        name="home"
+        name="index"
         options={{
-          title: 'Feature Requests',
-          tabBarIcon: ({ color, size }) => <Home size={size} color={color} />,
+          title: 'Modal',
+          tabBarIcon: ({ color, size }) => <Layers size={size} color={color} />,
         }}
       />
       <Tabs.Screen
