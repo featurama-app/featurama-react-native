@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
+  Alert,
   StyleSheet,
 } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
@@ -38,22 +39,49 @@ export function CreateRequestForm({
   const [description, setDescription] = useState('');
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [emailTouched, setEmailTouched] = useState(false);
 
-  const canSubmit = title.trim() && !isSubmitting &&
-    (emailCollection !== 'required' || email.trim());
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const trimmedEmail = email.trim();
+  const emailError = emailCollection !== 'none' && trimmedEmail.length > 0 && !emailRegex.test(trimmedEmail)
+    ? strings.emailInvalid
+    : null;
 
-  const handleSubmit = useCallback(async () => {
-    if (!canSubmit) return;
+  const canSubmit = Boolean(
+    title.trim() &&
+    !isSubmitting &&
+    !emailError &&
+    (emailCollection !== 'required' || trimmedEmail)
+  );
+
+  const doSubmit = useCallback(async () => {
     setIsSubmitting(true);
     try {
       await onSubmit(title.trim(), description.trim(), email.trim() || undefined);
       setTitle('');
       setDescription('');
       setEmail('');
+      setEmailTouched(false);
     } finally {
       setIsSubmitting(false);
     }
-  }, [canSubmit, title, description, email, onSubmit]);
+  }, [title, description, email, onSubmit]);
+
+  const handleSubmit = useCallback(() => {
+    if (!canSubmit) return;
+    if (emailCollection === 'optional' && !trimmedEmail) {
+      Alert.alert(
+        strings.emailSkipTitle,
+        strings.emailSkipMessage,
+        [
+          { text: strings.cancel, style: 'cancel' },
+          { text: strings.emailSkipConfirm, onPress: doSubmit },
+        ]
+      );
+      return;
+    }
+    doSubmit();
+  }, [canSubmit, emailCollection, trimmedEmail, strings, doSubmit]);
 
   return (
     <KeyboardAvoidingView
@@ -113,16 +141,25 @@ export function CreateRequestForm({
             <TextInput
               style={[styles.input, { backgroundColor: theme.secondary, color: theme.text }]}
               value={email}
-              onChangeText={setEmail}
+              onChangeText={(text) => {
+                setEmail(text);
+                if (!emailTouched) setEmailTouched(true);
+              }}
               placeholder={strings.emailPlaceholder}
               placeholderTextColor={theme.textSecondary}
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
             />
-            <Text style={[styles.emailHint, { color: theme.textSecondary }]}>
-              {emailCollection === 'required' ? strings.emailRequired : strings.emailEncouragement}
-            </Text>
+            {emailError && emailTouched ? (
+              <Text style={[styles.emailHint, { color: '#ef4444' }]}>
+                {emailError}
+              </Text>
+            ) : (
+              <Text style={[styles.emailHint, { color: theme.textSecondary }]}>
+                {emailCollection === 'required' ? strings.emailRequired : strings.emailEncouragement}
+              </Text>
+            )}
           </View>
         )}
       </ScrollView>

@@ -13,6 +13,10 @@ export interface FeaturamaStrings {
   emailPlaceholder: string;
   emailEncouragement: string;
   emailRequired: string;
+  emailSkipTitle: string;
+  emailSkipMessage: string;
+  emailSkipConfirm: string;
+  emailInvalid: string;
   error: string;
   retry: string;
   comments: string;
@@ -40,6 +44,10 @@ export const defaultStrings: FeaturamaStrings = {
   emailPlaceholder: 'Your email address',
   emailEncouragement: 'Add your email so we can follow up',
   emailRequired: 'Email is required',
+  emailSkipTitle: 'Submit without email?',
+  emailSkipMessage: "You haven't entered an email. We won't be able to follow up with you.",
+  emailSkipConfirm: 'Submit anyway',
+  emailInvalid: 'Please enter a valid email address',
   empty: 'No feature requests yet',
   emptyHint: 'Be the first to suggest a feature!',
   error: 'Something went wrong',
