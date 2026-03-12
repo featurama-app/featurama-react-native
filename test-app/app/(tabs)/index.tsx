@@ -43,19 +43,19 @@ export default function ModalScreen() {
         >
           <FeatureRequestsScreen
             colorScheme={isDark ? 'dark' : 'light'}
-            accentColor="#e53935"
+            accentColor="#1395d6"
             safeAreaTop={Platform.OS === 'android' ? insets.top : 0}
             onClose={() => setVisible(false)}
             theme={{
-              background: isDark ? '#1a0000' : '#fff0f0',
-              card: isDark ? '#2d0a0a' : '#ffe0e0',
-              secondary: isDark ? '#3d1515' : '#ffd0d0',
-              accent: '#e53935',
-              accentLight: isDark ? '#3d1515' : '#ffcdd2',
+              background: isDark ? '#191919' : '#ffffff',
+              card: isDark ? '#202020' : '#fefbf8',
+              secondary: isDark ? '#2a2a2a' : '#f5f5f5',
+              accent: '#1395d6',
+              accentLight: isDark ? '#1395d630' : '#1395d620',
               accentForeground: '#ffffff',
-              border: isDark ? '#4a1c1c' : '#ef9a9a',
-              borderAccent: '#e53935',
-              gray100: isDark ? '#2d0a0a' : '#ffcdd2',
+              border: isDark ? '#262626' : '#e5e5e5',
+              borderAccent: '#1395d6',
+              gray100: isDark ? '#262626' : '#f5f5f5',
             }}
           />
         </FeaturamaProvider>

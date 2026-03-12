@@ -1,5 +1,5 @@
 // App Color System - shadcn-aligned Light/Dark Theme Support
-// Accent Color: #4cb211 (Green)
+// Accent Color: Featurama Blue hsl(199 84% 46%) → #1395d6
 
 export const Colors = {
   light: {
@@ -16,9 +16,9 @@ export const Colors = {
     foreground: '#0a0a0a',
     mutedForeground: '#737373',
 
-    // Brand/Accent - Green
-    accent: '#4cb211',
-    accentLight: '#4cb21120',
+    // Brand/Accent - Featurama Blue
+    accent: '#1395d6',
+    accentLight: '#1395d620',
     accentForeground: '#ffffff',
 
     // Status Colors
@@ -56,9 +56,9 @@ export const Colors = {
     foreground: '#fafafa',
     mutedForeground: '#a3a3a3',
 
-    // Brand/Accent - Green (slightly lighter for dark mode)
-    accent: '#5bc91a',
-    accentLight: '#4cb21130',
+    // Brand/Accent - Featurama Blue (lighter for dark mode)
+    accent: '#3ab0eb',
+    accentLight: '#1395d630',
     accentForeground: '#ffffff',
 
     // Status Colors
