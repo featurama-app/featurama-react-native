@@ -26,5 +26,6 @@ coverage/
 
 # Misc
 *.log
+*.tgz
 .env
 .env.local
