@@ -12,7 +12,7 @@ export function Fab({ onPress, safeAreaBottom }: FabProps): JSX.Element {
 
   return (
     <TouchableOpacity
-      style={[styles.fab, { backgroundColor: theme.accent, bottom: safeAreaBottom + 4 }]}
+      style={[styles.fab, { backgroundColor: theme.accent, bottom: safeAreaBottom + 24 }]}
       onPress={onPress}
       activeOpacity={0.8}
     >

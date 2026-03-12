@@ -6,7 +6,7 @@ const config = getDefaultConfig(projectRoot);
 
 // Keep local SDK source edits live while forcing all runtime deps to resolve
 // from this app's node_modules to avoid duplicate React/React Native instances.
-const sdkPath = path.resolve(projectRoot, '../../sdks/react-native');
+const sdkPath = path.resolve(projectRoot, '..');
 const appNodeModules = path.resolve(projectRoot, 'node_modules');
 const reactNativeNodeModules = path.resolve(
   appNodeModules,

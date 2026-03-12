@@ -10,7 +10,7 @@ export function Branding({ safeAreaBottom }: BrandingProps): JSX.Element {
   const theme = useTheme();
 
   return (
-    <View style={[styles.wrapper, { bottom: safeAreaBottom + 16 }]} pointerEvents="box-none">
+    <View style={[styles.wrapper, { bottom: safeAreaBottom + 36 }]} pointerEvents="box-none">
       <TouchableOpacity
         activeOpacity={0.7}
         onPress={() => Linking.openURL('https://featurama.app')}
